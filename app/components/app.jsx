@@ -8,6 +8,7 @@ function App() {
   const [error, setError] = useState(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
 
   const checkSession = async (forceRefresh = false) => {
     setLoading(true)
@@ -54,7 +55,7 @@ function App() {
       console.log('Signed In?', nextStep);
       if(nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
          const res = await confirmSignIn({
-          challengeResponse: "Zaq12345@"
+          challengeResponse: confirm
         });
         console.log('Confirm In?', res);
       }
@@ -96,6 +97,15 @@ function App() {
           onChange={(e) => setPassword(e.target.value)}
           style={{ marginRight: '10px', padding: '5px' }}
         />
+
+         <input 
+          type="password" 
+          placeholder="Confirm" 
+          value={confirm} 
+          onChange={(e) => setConfirm(e.target.value)}
+          style={{ marginRight: '10px', padding: '5px' }}
+        />
+
         <button onClick={handleSignIn}>Sign In</button>
         <button onClick={handleSignOut} style={{ marginLeft: '10px' }}>Sign Out</button>
       </div>
