@@ -1,52 +1,38 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import "./../app/app.css";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
+import { runWithAmplifyServerContext } from "./amplify-server-utils";
+import { cookies } from "next/headers";
+import { TodoList } from "./TodoList";
+import { generateServerClientUsingCookies } from "@aws-amplify/adapter-nextjs/api";
+import App from "./components/app";
+// export const cookieBasedClient = generateServerClientUsingCookies<Schema>({
+//   config: outputs,
+//   cookies,
+// });
 
-Amplify.configure(outputs);
-
-const client = generateClient<Schema>();
-
-export default function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-
-  function listTodos() {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }
-
-  useEffect(() => {
-    listTodos();
-  }, []);
-
-  function createTodo() {
-    client.models.Todo.create({
-      content: window.prompt("Todo content"),
-    });
-  }
+// Server component that fetches initial data
+export default async function Page() {
+  // const initialTodos = await runWithAmplifyServerContext({
+  //   nextServerContext: { cookies },
+  //   operation: (contextSpec) => {
+  //     const client = generateServerClientUsingCookies<Schema>();
+  //     return client.models.Todo.list();
+  //   },
+  // });
 
   return (
     <main>
-      <h1>My todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
+      <App />
+      {/* <div>
+        🥳 App successfully hosted with SSR. Try creating a new todo.
         <br />
-        <a href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/">
-          Review next steps of this tutorial.
+        <a href="https://docs.amplify.aws/react/build-a-backend/server-side-rendering/">
+          Learn more about Amplify SSR.
         </a>
-      </div>
+      </div> */}
     </main>
   );
 }
+  
